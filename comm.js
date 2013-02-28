@@ -128,7 +128,7 @@
 						_d = _libs.form(o, d);
 						o.data = _d;
 						o.url = o.element[0]['action'];
-						_setup.go(o);alert(1);
+						_setup.go(o);
 					});
 				} else {
 					((o.debug) && (_d)) ? _log.debug(o.logID, '_setup.get: User supplied data specified') : false;
