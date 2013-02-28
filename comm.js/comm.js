@@ -24,10 +24,13 @@
 		 * @object defaults
 		 * @abstract Default set of options for plug-in
 		 *
-		 * @param {String}	appID		Unique identifier for referencing storage object
-		 * @param {String}	url			Specified URL param
-		 * @param {Boolean}	debug		Enable or disable debugging options
-		 * @param {Object}	element		Element to which this plug-in is bound
+		 * @param {String}		appID			Unique identifier for referencing storage object
+		 * @param {String}		url				Specified URL param
+		 * @param {Boolean}		debug			Enable or disable debugging options
+		 * @param {Object}		element			Element to which this plug-in is bound
+		 * @param {Function}	callback		Callback function for success
+		 * @param {Object}		precallback		Callback prior to send
+		 * @param {Object}		errcallback		Callback on errors
 		 */
 		var defaults = {
 			appID:			'comm.js',
@@ -214,27 +217,27 @@
 					var host = o.url+'?cmd='+c;
 					var socket = new WebSocket(host);
 
-					(o.debug) ? _log.debug(o.logID, '_libs.websocket: Status: '+socket.readyState) : false;
+					(o.debug) ? _log.debug(o.logID, '_comm.websocket: Status: '+socket.readyState) : false;
 
 					socket.onopen = function() {
 						try {
 							socket.send(d);
-							(o.debug) ? _log.debug(o.logID, '_libs.websocket: Sent: '+d) : false;
+							(o.debug) ? _log.debug(o.logID, '_comm.websocket: Sent: '+d) : false;
 						} catch(exception) {
-							_log.error(o.logID, '_libs.websocket: Error => '+exception);
+							_log.error(o.logID, '_comm.websocket: Error => '+exception);
 						}
 					}
 
 					socket.onmessage = function(msg) {
-						(o.debug) ? _log.debug(o.logID, '_libs.websocket: Receieved: '+msg.data) : false;
+						(o.debug) ? _log.debug(o.logID, '_comm.websocket: Receieved: '+msg.data) : false;
 						_r = msg.data;
 					}
 
 					socket.onclose = function() {
-						(o.debug) ? _log.debug(o.logID, '_libs.websocket: Status: '+socket.readyState) : false;
+						(o.debug) ? _log.debug(o.logID, '_comm.websocket: Status: '+socket.readyState) : false;
 					}
 				} catch(exception) {
-					_log.error(o.logID, '_libs.websocket: Error => '+exception);
+					_log.error(o.logID, '_comm.websocket: Error => '+exception);
 				}
 				socket.close();
 				return _r;
@@ -291,7 +294,7 @@
 
 				$.ajax({
 					global: false,
-					url: o.url+'?cmd='+c,
+					url: o.url,
 					type: 'post',
 					data: d,
 					dataType: 'json',
