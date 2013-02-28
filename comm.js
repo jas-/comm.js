@@ -93,6 +93,23 @@
 			},
 
 			/**
+			 * @function go
+			 * @scope private
+			 * @abstract Initializes request if data present
+			 *
+			 * @param {Object} o Plug-in option object
+			 * @returns {Object}
+			 */
+			go: function(o){
+				if (_comm.online()){
+					_comm.decide(o, false, o.url);
+				} else {
+					return '{error:"Network connectivity not present"}';
+				}
+				return o.data;
+			},
+
+			/**
 			 * @function bind
 			 * @scope private
 			 * @abstract Apply supplied 'data' DOM element processing or
@@ -109,6 +126,9 @@
 					$(d).on('submit', function(e){
 						e.preventDefault();
 						_d = _libs.form(o, d);
+						o.data = _d;
+						o.url = o.element[0]['action'];
+						_setup.go(o);
 					});
 				} else {
 					((o.debug) && (_d)) ? _log.debug(o.logID, '_setup.get: User supplied data specified') : false;
@@ -128,6 +148,8 @@
 
 				/* use or create log function(s) */
 				_log.init();
+
+				o.data = (_libs.size(o.data) > 0) ? _setup.go(o, o.data) : _setup.bind(o, o.element);
 
 				return true;
 			}
@@ -313,23 +335,24 @@
 						xhr.setRequestHeader('Content-MD5', _h);
 						xhr.withCredentials = true;
 
-						/* sign header with private key */
+						((o.precallback)&&($.isFunction(o.precallback))) ? o.precallback($(this)) : false;
 
 						(o.debug) ? _log.debug(o.logID, '_comm.ajax: Set request headers => {"X-Alt-Referer":"'+o.appID+'","Content-MD5":"'+_h+'"}') : false;
 					},
 
 					success: function(x, status, xhr){
 
-						/* verify header signature with public key */
-
 						o.appID = (/^[a-f0-9]{8}\-([a-f0-9]{4}\-){3}[a-f0-9]{12}$/i.test(xhr.getResponseHeader('X-Alt-Referer'))) ? xhr.getResponseHeader('X-Alt-Referer') : o.appID;
 
 						(o.debug) ? _log.debug(o.logID, '_comm.ajax: '+status+' => '+xhr.statusText) : false;
+						((o.callback)&&($.isFunction(o.callback))) ? o.callback.call(x) : false;
+
 						_r = x;
 					},
 
 					error: function(xhr, status, error){
 						_log.error(o.appID, '_comm.ajax: '+status+' => '+error.message);
+						((o.errcallback)&&($.isFunction(o.errcallback))) ? o.errcallback.call(x) : false;
 					}
 				});
 				return _r;
