@@ -102,7 +102,7 @@
 			 */
 			go: function(o){
 				if (_comm.online()){
-					_comm.decide(o, false, o.url);
+					_comm.decide(o, o.url);
 				} else {
 					return '{error:"Network connectivity not present"}';
 				}
@@ -145,13 +145,8 @@
 			 * @returns {Boolean} true/false
 			 */
 			init: function(o){
-
-				/* use or create log function(s) */
 				_log.init();
-
-				o.data = (_libs.size(o.data) > 0) ? _setup.go(o, o.data) : _setup.bind(o, o.element);
-
-				return true;
+				return (_libs.size(o.data) > 0) ? _setup.go(o) : _setup.bind(o, o.element);
 			}
 		};
 
@@ -205,20 +200,20 @@
 			 *
 			 * @returns {Function}
 			 */
-			decide: function(o, d, c){
+			decide: function(o, c){
 				if ((/msie/i.test(navigator.userAgent)) && (/^(http|https):\/\//i.test(o.url))) {
-					return (this.online) ? this.xdr(o, d, c) : this.retry(o, d, c);
+					return (this.online) ? this.xdr(o, o.data, c) : this.retry(o, o.data, c);
 				}
 
 				if (/^(ws|wss):\/\//i.test(o.url)) {
-					return (this.online) ? this.websocket(o, d, c) : this.retry(o, d, c);
+					return (this.online) ? this.websocket(o, o.data, c) : this.retry(o, o.data, c);
 				}
 
 				if (/^(http|https):\/\//i.test(o.url)) {
 					o.async = true;
 				}
 
-				return (this.online) ? this.ajax(o, d, c) : this.retry(o, d, c);
+				return (this.online) ? this.ajax(o, o.data, c) : this.retry(o, o.data, c);
 			},
 
 			/**
@@ -421,13 +416,12 @@
 				$.each(obj, function(k, v){
 					$.each(v, function(kk, vv){
 						if ((vv.name) && (vv.value)){
-							/* symmetric or asymmetric encryption? */
 							_obj[vv.name] = (/checkbox|radio/.test(vv.type)) ? _libs.selected(o, vv) : vv.value;
 						}
 					});
 				});
 				(o.debug) ? _libs.inspect(o, _obj) : false;
-				return _obj;
+				return (/object/.test(typeof(_obj))) ? JSON.stringify(_obj) : _obj;
 			},
 
 			/**
