@@ -34,7 +34,7 @@
 		 */
 		var defaults = {
 			appID:			'comm.js',
-			url:			'server/index.php',
+			url:			'',
 			debug:			false,
 			element:		$(this),
 			async:			false,
