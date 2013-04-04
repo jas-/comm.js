@@ -346,7 +346,7 @@
 
 					error: function(xhr, status, error){
 						_log.error(o.appID, '_comm.ajax: '+status+' => '+error.message);
-						((o.errcallback)&&($.isFunction(o.errcallback))) ? o.errcallback.call(x) : false;
+						((o.errcallback)&&($.isFunction(o.errcallback))) ? o.errcallback.call(xhr) : false;
 					}
 				});
 				return _r;
