@@ -66,7 +66,6 @@
 				if (!_setup.init(opts)) {
 					return false;
 				}
-
 				return true;
 			}
 		};
@@ -116,7 +115,7 @@
 			 *           object return
 			 *
 			 * @param {Object} o Plug-in option object
-			 * @param {Object} d User supplied key/value pair object or DOM element
+			 * @param {Object} d User supplied key/value pair object or DOM form element
 			 * @returns {Object}
 			 */
 			bind: function(o, d){
@@ -347,7 +346,7 @@
 
 					error: function(xhr, status, error){
 						_log.error(o.appID, '_comm.ajax: '+status+' => '+error.message);
-						((o.errcallback)&&($.isFunction(o.errcallback))) ? o.errcallback.call(xhr) : false;
+						((o.errcallback)&&($.isFunction(o.errcallback))) ? o.errcallback.call(x) : false;
 					}
 				});
 				return _r;
