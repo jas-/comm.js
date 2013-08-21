@@ -24,22 +24,25 @@
 		 * @object defaults
 		 * @abstract Default set of options for plug-in
 		 *
-		 * @param {String}		appID			Unique identifier for referencing storage object
-		 * @param {String}		url				Specified URL param
-		 * @param {Boolean}		debug			Enable or disable debugging options
-		 * @param {Object}		element			Element to which this plug-in is bound
-		 * @param {Function}	callback		Callback function for success
+		 * @param {String}		appID					Unique identifier for referencing storage object
+		 * @param {String}		url						Specified URL param
+		 * @param {Boolean}		debug					Enable or disable debugging options
+		 * @param {Object}		element				Element to which this plug-in is bound
+		 * @param {Boolean}		async					Default to async communication
+		 * @param {String}		method				Method of communication (GET, PUT, POST, DELETE)
+		 * @param {Function}	callback			Callback function for success
 		 * @param {Object}		precallback		Callback prior to send
 		 * @param {Object}		errcallback		Callback on errors
 		 */
 		var defaults = {
-			appID:			'comm.js',
-			url:			'',
-			debug:			false,
-			element:		$(this),
-			async:			false,
-			logID:			'',
-			callback:		function(){},
+			appID:				'comm.js',
+			url:					'',
+			debug:				false,
+			element:			$(this),
+			async:				false,
+			method:				'get',
+			logID:				'',
+			callback:			function(){},
 			precallback:	function(){},
 			errcallback:	function(){}
 		};
@@ -145,7 +148,7 @@
 			 */
 			init: function(o){
 				_log.init();
-				return (_libs.size(o.data) > 0) ? _setup.go(o) : _setup.bind(o, o.element);
+				return ((_libs.size(o.data) > 0) || (/^get$/i.test(o.method))) ? _setup.go(o) : _setup.bind(o, o.element);
 			}
 		};
 
@@ -311,7 +314,7 @@
 				$.ajax({
 					global: false,
 					url: o.url,
-					type: 'post',
+					type: o.method,
 					data: d,
 					dataType: 'json',
 					contentType: 'application/json; charset=utf8',

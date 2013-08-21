@@ -8,8 +8,10 @@
 		<script>
 			var $j = jQuery.noConflict();
 			$j(document).ready(function(){
-				$j(window).comm({
-					debug:true
+				$j(document).comm({
+					debug:	true,
+					url:	'http://inventory.dev:8080/computer',
+					method:	'get'
 				});
 			});
 		</script>
