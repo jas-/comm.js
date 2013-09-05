@@ -316,8 +316,6 @@
 					url: o.url,
 					type: o.method,
 					data: d,
-					dataType: 'json',
-					contentType: 'application/json; charset=utf8',
 					async: o.async,
 					xhrFields: {
 						withCredentials: true
