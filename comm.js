@@ -315,12 +315,11 @@
 			 */
 			ajax: function(o, d, c){
 				var _r = false, _h = false;
-
 				$.ajax({
 					global: false,
 					url: o.url,
 					type: o.method,
-					data: _libs.serialize(d),
+					data: d,
 					async: o.async,
 					xhrFields: {
 						withCredentials: true
@@ -426,8 +425,7 @@
 					});
 				});
 				(o.debug) ? _libs.inspect(o, _obj) : false;
-				return (/object/.test(typeof(_obj))) ? JSON.stringify(_obj) : _obj;
-			},
+				return _libs.serialize(_obj);			},
 
 			/**
 			 * @function selected
