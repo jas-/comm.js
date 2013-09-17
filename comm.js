@@ -320,7 +320,7 @@
 					global: false,
 					url: o.url,
 					type: o.method,
-					data: d,
+					data: _libs.serialize(d),
 					async: o.async,
 					xhrFields: {
 						withCredentials: true
