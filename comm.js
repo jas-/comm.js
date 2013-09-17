@@ -123,17 +123,22 @@
 			 */
 			bind: function(o, d){
 				var _d = false;
+
 				if ((d).is('form')){
-					(o.debug) ? _log.debug(o.logID, '_setup.get: Currently bound to form') : false;
+					(o.debug) ? _log.debug(o.logID, '_setup.bind: Currently bound to form') : false;
+
 					$(d).on('submit', function(e){
 						e.preventDefault();
 						_d = _libs.form(o, d);
 						o.data = _d;
 						o.url = o.element[0]['action'];
+						o.method = o.element[0]['method'];
 						_setup.go(o);
 					});
+
 				} else {
-					((o.debug) && (_d)) ? _log.debug(o.logID, '_setup.get: User supplied data specified') : false;
+					((o.debug) && (_d)) ? _log.debug(o.logID, '_setup.bind: User supplied data specified') : false;
+					_setup.go(o)
 				}
 				return _d;
 			},
@@ -148,7 +153,7 @@
 			 */
 			init: function(o){
 				_log.init();
-				return ((_libs.size(o.data) > 0) || (/^get$/i.test(o.method))) ? _setup.go(o) : _setup.bind(o, o.element);
+				return _setup.bind(o, o.element);
 			}
 		};
 
