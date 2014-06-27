@@ -1,5 +1,5 @@
 /**
- * Description: A jQuery plug-in to handle AJAX, XDR, WS & WSS protocols
+ * Description: Handles AJAX, XDR, WS & WSS protocols
  *
  * Fork me @ https://www.github.com/jas-/comm.js
  *
@@ -10,15 +10,11 @@
  * License: GPL (see LICENSE)
  */
 
-(function($){
+(function(window, undefined){
 
-	/**
-	 * @function comm
-	 * @abstract
-	 * @param method string
-	 * @param options object
-	 */
-	$.fn.comm = function(method) {
+  'use strict';
+
+  var comm = comm || function(o){
 
 		/**
 		 * @object defaults
@@ -48,51 +44,32 @@
 		};
 
 		/**
-		 * @method methods
-		 * @scope public
-		 * @abstract Public methods
-		 *  - init
-		 */
-		var methods = methods || {
-
-			/**
-			 * @function init
-			 * @scope public
-			 * @abstract
-			 */
-			init: function(o){
-
-				/* Merge user supplied options with defaults */
-				var opts = _setup.merge(o, defaults);
-
-				/* Initialize setup */
-				if (!_setup.init(opts)) {
-					return false;
-				}
-				return true;
-			}
-		};
-
-		/**
 		 * @method _setup
 		 * @scope private
 		 * @abstract Initial setup routines
 		 */
 		var _setup = _setup || {
 
-			/**
-			 * @function merge
-			 * @scope private
-			 * @abstract Perform preliminary option/default object merge
-			 *
-			 * @param {Object} o Plug-in option object
-			 * @param {Object} d Default plug-in option object
-			 * @returns {Object}
-			 */
-			merge: function(o, d){
-				d.logID = d.appID;
-				return $.extend({}, d, o);
-			},
+      /**
+  		 * @function merge
+  		 * @scope private
+  		 * @abstract Perform preliminary option/default object merge
+  		 *
+  		 * @param {Object} o Plug-in option object
+  		 * @param {Object} d Default plug-in option object
+       *
+  		 * @returns {Object}
+  		 */
+  		merge: function(o, d){
+  			for (var p in d) {
+          if (d.hasOwnProperty(p)) {
+            o[p] = d[p];
+          }
+          o[p] = d[p];
+        }
+        (o.debug) ? _log.debug(o.appID, '_libs.merge: Merged options') : false;
+        return o;
+  		},
 
 			/**
 			 * @function go
@@ -847,14 +824,24 @@
 			}
 		};
 
-		/* Robot, do work */
-		if (methods[method]){
-			return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-		} else if ((typeof method==='object')||(!method)){
-			return methods.init.apply(this, arguments);
-		} else {
-			_log.error('Method '+method+' does not exist');
-		}
-		return true;
+		/**
+		 * @function init
+		 * @scope public
+		 * @abstract
+		 */
+		var init = function(o){
+
+			/* Merge user supplied options with defaults */
+			var opts = _setup.merge(o, defaults);
+
+			/* Initialize setup */
+			if (!_setup.init(opts)) {
+				return false;
+			}
+			return true;
+		}();
+
+		/* comm.js, do work */
+		window.comm = comm;
 	};
-})(jQuery);
+})(window);

@@ -1,14 +1,13 @@
 # comm.js #
 
-A jQuery plug-in to handle AJAX, XDR, WS & WSS protocols
+Handles AJAX, XDR, WS & WSS protocols
 
 Fork me @ https://www.github.com/jas-/comm.js
 
 ## Important ##
-This plug-in is still in alpha phases of development. Currently only supports (without bugs) AJAX requests. The XDR (for clients using MSIE) & WS/WSS protocols have not been thoughly tested.
+Supports XMLHttpRequests, XDR (for clients using MSIE & when using CORS) as well as WS/WSS protocols.
 
 ## Options ##
-This plug-in also has several configurable options available for implementation:
 * _appID_ - The option allows for dual functionality of CSRF support as well as an index to access locally saved keyring data
 * _url_ - The URL param can be used as a substitute for the default binding to a form
 * _callback_ - If you wish to perform additional operations with returned data
