@@ -20,15 +20,15 @@
 		 * @object defaults
 		 * @abstract Default set of options for plug-in
 		 *
-		 * @param {String}		appID					Unique identifier for referencing storage object
-		 * @param {String}		url						Specified URL param
-		 * @param {Boolean}		debug					Enable or disable debugging options
-		 * @param {Object}		element				Element to which this plug-in is bound
-		 * @param {Boolean}		async					Default to async communication
-		 * @param {String}		method				Method of communication (GET, PUT, POST, DELETE)
-		 * @param {Function}	callback			Callback function for success
-		 * @param {Object}		precallback		Callback prior to send
-		 * @param {Object}		errcallback		Callback on errors
+		 * @param {String} appID Unique identifier
+		 * @param {String} url Specified URL param
+		 * @param {Boolean} debug Enable or disable debugging options
+		 * @param {Object} element Element to which this plug-in is bound
+		 * @param {Boolean} async Default to async communication
+		 * @param {String} method Method of communication (GET, PUT, POST, DELETE)
+		 * @param {Function} callback Callback function for success
+		 * @param {Object} precallback Callback prior to send
+		 * @param {Object} errcallback Callback on errors
 		 */
 		var defaults = {
 			appID:				'comm.js',
