@@ -31,16 +31,16 @@
 		 * @param {Object} errcallback Callback on errors
 		 */
 		var defaults = {
-			appID:				'comm.js',
-			url:					'',
-			debug:				false,
-			element:			$(this),
-			async:				false,
-			method:				'get',
-			logID:				'',
-			callback:			function(){},
-			precallback:	function(){},
-			errcallback:	function(){}
+			appID: 'comm.js',
+			url: '',
+			debug: false,
+			//element: $(this),
+			async: false,
+			method: 'get',
+			logID: '',
+			callback: function(){},
+			precallback: function(){},
+			errcallback: function(){}
 		};
 
 		/**
@@ -100,11 +100,12 @@
 			 */
 			bind: function(o, d){
 				var _d = false;
+				d = d || false;
 
-				if ((d).is('form')){
+				if (/form/.test(d.tagName)){
 					(o.debug) ? _log.debug(o.logID, '_setup.bind: Currently bound to form') : false;
 
-					$(d).on('submit', function(e){
+					_libs.event(d, 'submit', function(e){
 						e.preventDefault();
 						_d = _libs.form(o, d);
 						o.data = _d;
@@ -351,14 +352,14 @@
 			 * @param {Array|Object} obj An object or array to be inspected
 			 */
 			inspect: function(o, obj){
-				$.each(obj, function(x, y){
-					if ((/object|array/.test(typeof(y))) && (_libs.size(y) > 0)){
-						(o.debug) ? _log.debug(o.logID, '_libs.inspect: Examining '+x+' ('+typeof(y)+')') : false;
-						_libs.inspect(o, y);
-					} else {
-						(o.debug) ? _log.debug(o.logID, '_libs.inspect: '+x+' => '+y) : false;
-					}
-				});
+  			for (var x in obj){
+  				if ((/object|array/.test(typeof(obj[x]))) && (_libs.size(obj[x]) > 0)){
+  					(o.debug) ? _log.debug(o.appID, '_libs.inspect: Examining '+x+' ('+typeof(obj[x])+')') : false;
+  					_libs.inspect(o, obj[x]);
+  				} else {
+  					(o.debug) ? _log.debug(o.appID, '_libs.inspect: '+x+' => '+obj[x]) : false;
+          }
+  			}
 			},
 
 			/**
@@ -371,15 +372,32 @@
 			 * @returns {Integer}
 			 */
 			size: function(obj){
-				var n = 0;
-				if (/object/.test(typeof(obj))) {
-					$.each(obj, function(k, v){
-						if (obj.hasOwnProperty(k)) n++;
-					});
-				} else if (/array/.test(typeof(obj))) {
-					n = obj.length;
+  			var n = 0;
+  			if (/object/.test(typeof(obj))) {
+  				for (var k in obj){
+  					if (obj.hasOwnProperty(k)) n++;
+  				}
+  			} else if (/array/.test(typeof(obj))) {
+  				n = obj.length;
+  			}
+  			return n;
+			},
+
+			/**
+			 * @function event
+			 * @scope private
+			 * @abstract Add an event handler to the DOM object specified
+			 *
+			 * @param {Object} obj The form object to convert
+			 *
+			 * @returns {Object}
+			 */
+			event: function (element, type, handler) {
+				if(element.addEventListener) {
+					element.addEventListener(type, handler, false);
+				} else {
+					element.attachEvent('on'+type, handler);
 				}
-				return n;
 			},
 
 			/**
@@ -394,15 +412,16 @@
 			form: function(o, obj){
 				(o.debug) ? _log.debug(o.logID, '_libs.form: Retrieving form data') : false;
 				var _obj = {};
-				$.each(obj, function(k, v){
-					$.each(v, function(kk, vv){
-						if ((vv.name) && (vv.value)){
-							_obj[vv.name] = (/checkbox|radio/.test(vv.type)) ? _libs.selected(o, vv) : vv.value;
+				for (var v in obj) {
+					for (var vv in obj) {
+						if (obj[vv]) {
+							_obj[obj[vv].name] = (/checkbox|radio/.test(vv.tagName)) ? _libs.selected(o, obj[vv]) : obj[vv];
 						}
-					});
-				});
+					}
+				}
 				(o.debug) ? _libs.inspect(o, _obj) : false;
-				return _libs.serialize(_obj);			},
+				return _libs.serialize(_obj);
+			},
 
 			/**
 			 * @function selected
@@ -829,7 +848,7 @@
 		 * @scope public
 		 * @abstract
 		 */
-		var init = function(o){
+		var init = function(){
 
 			/* Merge user supplied options with defaults */
 			var opts = _setup.merge(o, defaults);
@@ -841,7 +860,9 @@
 			return true;
 		}();
 
-		/* comm.js, do work */
-		window.comm = comm;
-	};
+	}
+
+	/* comm.js, do work */
+	window.comm = comm;
+
 })(window);
