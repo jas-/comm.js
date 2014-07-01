@@ -15,6 +15,30 @@ This plug-in also has several configurable options available for implementation:
 * _precallback_ - Here you can perform some pre-processing if need be
 * _errcallback_ - Handle errors with this callback
 
+## Example usage ##
+Usage is easy. Please see these examples:
+
+### Default ###
+This example assumes `#form-id` as a valid DOM element.
+
+```javascript
+$('#form-id').comm();
+```
+
+### Custom data object ###
+This example can be used as an event driven interface for custom objects.
+
+```javascript
+$(window).comm({
+	url: 'https://webserver.com',
+  data: {key: 'value'}
+});
+```
+
+## A note on ws/wss and/or xdr protocols ##
+XMLHttpRequests is the default method of communication unless the clients
+browser is Internet explorer or the `url` property is prefixed with `ws` or `wss`.
+
 ## A note on CORS ##
 If you wish to use this for CORS requests which it does support you must configure your web server to allow the following header params.
 ```
