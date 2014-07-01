@@ -50,6 +50,6 @@ If you wish to use this for CORS requests which it does support you must configu
 ```
 Access-Control-Allow-Origin: https://example.com
 Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
-Access-Control-Allow-Headers: Cache-Control, Content-MD5, Content-Type, X-Alt-Referer, X-Requested-With
+Access-Control-Allow-Headers: Cache-Control, Content-Type
 Access-Control-Allow-Credentials: true
 ```

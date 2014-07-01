@@ -250,10 +250,6 @@
 				}
 
 				function _headers(o) {
-					(o.async) ?
-						_xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest') :
-						false;
-
 					if (!_reg.test(o.url))
 						_xhr.withCredentials = true;
 
