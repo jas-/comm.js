@@ -269,7 +269,7 @@
 				_xhr.onreadystatechange = _handler;
 				_xhr.open(o.method, o.url, o.async);
 				_headers(o);
-				_xhr.send(/post/i.test(o.method)?o.data:null);
+				_xhr.send(/post|put/i.test(o.method)?o.data:null);
 
 				return _r;
 			}
