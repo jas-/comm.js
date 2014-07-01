@@ -3,9 +3,6 @@
  *
  * Fork me @ https://www.github.com/jas-/comm.js
  *
- * Methods (public):
- *  - init: Default method
- *
  * Author: Jason Gerfen <jason.gerfen@gmail.com>
  * License: GPL (see LICENSE)
  */
@@ -23,7 +20,7 @@
 		 * @param {String} appID Unique identifier
 		 * @param {String} url Specified URL param
 		 * @param {Boolean} debug Enable or disable debugging options
-		 * @param {Object} element Element to which this plug-in is bound
+		 * @param {Object} bind Element to which this plug-in is bound
 		 * @param {Boolean} async Default to async communication
 		 * @param {String} method Method of communication (GET, PUT, POST, DELETE)
 		 * @param {Function} callback Callback function for success
@@ -33,9 +30,9 @@
 		var defaults = {
 			appID: 'comm.js',
 			url: '',
+			bind: false,
 			debug: false,
-			//element: $(this),
-			async: false,
+			async: true,
 			method: 'get',
 			logID: '',
 			callback: function(){},
@@ -60,14 +57,21 @@
        *
   		 * @returns {Object}
   		 */
-  		merge: function(o, d){
+  		merge: function(d, o){
+				d = d || {};
+
   			for (var p in d) {
           if (d.hasOwnProperty(p)) {
-            o[p] = d[p];
+            o[p] = (/object/.test(typeof(d[p]))) ?
+							_libs.merge(o[p], d[p]) : d[p];
           }
           o[p] = d[p];
         }
-        (o.debug) ? _log.debug(o.appID, '_libs.merge: Merged options') : false;
+
+				o.logID = o.appID;
+
+        (o.debug) ? _log.debug(o.logID, '_libs.merge: Merged options') : false;
+
         return o;
   		},
 
@@ -98,26 +102,31 @@
 			 * @param {Object} d User supplied key/value pair object or DOM form element
 			 * @returns {Object}
 			 */
-			bind: function(o, d){
-				var _d = false;
-				d = d || false;
+			bind: function(o){
+				var _d = false
+					,	_e = document.getElementById(o.bind) || '';
 
-				if (/form/.test(d.tagName)){
-					(o.debug) ? _log.debug(o.logID, '_setup.bind: Currently bound to form') : false;
+				if (/form/i.test(_e.tagName)){
+					(o.debug) ?
+						_log.debug(o.logID, '_setup.bind: Currently bound to form') :
+						false;
 
 					_libs.event(d, 'submit', function(e){
-						e.preventDefault();
 						_d = _libs.form(o, d);
 						o.data = _d;
 						o.url = o.element[0]['action'];
 						o.method = o.element[0]['method'];
-						_setup.go(o);
+						this.go(o);
 					});
 
 				} else {
-					((o.debug) && (_d)) ? _log.debug(o.logID, '_setup.bind: User supplied data specified') : false;
-					_setup.go(o)
+					(o.debug) ?
+						_log.debug(o.logID, '_setup.bind: User supplied data specified') :
+						false;
+
+					this.go(o)
 				}
+
 				return _d;
 			},
 
@@ -131,7 +140,7 @@
 			 */
 			init: function(o){
 				_log.init();
-				return _setup.bind(o, o.element);
+				return _setup.bind(o);
 			}
 		};
 
@@ -186,16 +195,15 @@
 			 * @returns {Function}
 			 */
 			decide: function(o, c){
-				if ((/msie/i.test(navigator.userAgent)) && (/^(http|https):\/\//i.test(o.url))) {
+				var regex = new RegExp(document.location.href);
+
+				if ((/msie/i.test(navigator.userAgent)) && (/^(http|https):\/\//i.test(o.url)) &&
+						(!regex.test(o.url))) {
 					return (this.online) ? this.xdr(o, o.data, c) : this.retry(o, o.data, c);
 				}
 
 				if (/^(ws|wss):\/\//i.test(o.url)) {
 					return (this.online) ? this.websocket(o, o.data, c) : this.retry(o, o.data, c);
-				}
-
-				if (/^(http|https):\/\//i.test(o.url)) {
-					o.async = true;
 				}
 
 				return (this.online) ? this.ajax(o, o.data, c) : this.retry(o, o.data, c);
@@ -276,7 +284,9 @@
 				xdr.onerror = function(exception){
 					_log.error(o.logID, '_libs.xdr: Error => '+exception);
 				};
+
 				xdr.send(d);
+
 				return _r;
 			},
 
@@ -292,46 +302,46 @@
 			 * @returns {String|Object}
 			 */
 			ajax: function(o, d, c){
-				var _r = false, _h = false;
-				$.ajax({
-					global: false,
-					url: o.url,
-					type: o.method,
-					data: d,
-					async: o.async,
-					xhrFields: {
-						withCredentials: true
-					},
+				var _r = false, _h = false, _xhr = false;
 
-					beforeSend: function(xhr){
-						_h = (_libs.serialize(d)) ? _libs.base64(o, _libs.md5(o, _libs.serialize(d))) : _libs.base64(o, _libs.md5(o, o.appID));
+				function _response(data) {
+					_r = data;
+				}
 
-						(o.async) ? xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest') : false;
-
-						xhr.setRequestHeader('X-Alt-Referer', o.appID);
-						xhr.setRequestHeader('Content-MD5', _h);
-						xhr.withCredentials = true;
-
-						((o.precallback)&&($.isFunction(o.precallback))) ? o.precallback($(this)) : false;
-
-						(o.debug) ? _log.debug(o.logID, '_comm.ajax: Set request headers => {"X-Alt-Referer":"'+o.appID+'","Content-MD5":"'+_h+'"}') : false;
-					},
-
-					success: function(x, status, xhr){
-
-						o.appID = (/^[a-f0-9]{8}\-([a-f0-9]{4}\-){3}[a-f0-9]{12}$/i.test(xhr.getResponseHeader('X-Alt-Referer'))) ? xhr.getResponseHeader('X-Alt-Referer') : o.appID;
-
-						(o.debug) ? _log.debug(o.logID, '_comm.ajax: '+status+' => '+xhr.statusText) : false;
-						((o.callback)&&($.isFunction(o.callback))) ? o.callback.call(x) : false;
-
-						_r = x;
-					},
-
-					error: function(xhr, status, error){
-						_log.error(o.appID, '_comm.ajax: '+status+' => '+error.message);
-						((o.errcallback)&&($.isFunction(o.errcallback))) ? o.errcallback.call(xhr) : false;
+				function _handler() {
+					if (this.readyState == this.DONE && this.status == 200) {
+						_response(this.responseText);
 					}
-				});
+				}
+
+				function _headers(o) {
+					var _data = (d) ? _lib.serialize(d) : false;
+
+					_h = (_data) ?
+						_libs.base64(o, _libs.md5(o, _data)) :
+						_libs.base64(o, _libs.md5(o, o.appID));
+
+					(o.async) ?
+						_xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest') :
+						false;
+
+					_xhr.setRequestHeader('X-Alt-Referer', o.appID);
+					_xhr.setRequestHeader('Content-MD5', _h);
+
+					((o.precallback) && (/function/.test(typeof(o.precallback)))) ?
+						o.precallback(this) : false;
+
+					(o.debug) ?
+						_log.debug(o.logID, '_comm.ajax: Set request headers') :
+						false;
+				}
+
+				_xhr = new XMLHttpRequest();
+				_xhr.onreadystatechange = _handler;
+				_xhr.open(o.method, o.url, o.async);
+				_headers(o);
+				_xhr.send();
+
 				return _r;
 			}
 		}
@@ -353,9 +363,9 @@
 			 */
 			inspect: function(o, obj){
   			for (var x in obj){
-  				if ((/object|array/.test(typeof(obj[x]))) && (_libs.size(obj[x]) > 0)){
+  				if ((/object|array/.test(typeof(obj[x]))) && (this.size(obj[x]) > 0)){
   					(o.debug) ? _log.debug(o.appID, '_libs.inspect: Examining '+x+' ('+typeof(obj[x])+')') : false;
-  					_libs.inspect(o, obj[x]);
+  					this.inspect(o, obj[x]);
   				} else {
   					(o.debug) ? _log.debug(o.appID, '_libs.inspect: '+x+' => '+obj[x]) : false;
           }
@@ -415,12 +425,12 @@
 				for (var v in obj) {
 					for (var vv in obj) {
 						if (obj[vv]) {
-							_obj[obj[vv].name] = (/checkbox|radio/.test(vv.tagName)) ? _libs.selected(o, obj[vv]) : obj[vv];
+							_obj[obj[vv].name] = (/checkbox|radio/i.test(vv.tagName)) ? this.selected(o, obj[vv]) : obj[vv];
 						}
 					}
 				}
-				(o.debug) ? _libs.inspect(o, _obj) : false;
-				return _libs.serialize(_obj);
+				(o.debug) ? this.inspect(o, _obj) : false;
+				return this.serialize(_obj);
 			},
 
 			/**
@@ -448,15 +458,15 @@
 			 * @returns {String}
 			 */
 			serialize: function(obj){
-				if (_libs.size(obj) > 0){
-					var x='';
-					$.each(obj, function(a, b){
-						if (/object/.test(typeof(b))){
-							_libs.serialize(b);
+				if (this.size(obj) > 0){
+					var x = '';
+					for (var b in obj) {
+						if (/object/.test(typeof(obj[b]))){
+							_libs.serialize(obj[b]);
 						} else {
-							x+=a+'='+b+'&';
+							x+=b+'='+obj[b]+'&';
 						}
-					});
+					}
 					x = x.substring(0, x.length - 1);
 				} else {
 					x = obj;
@@ -499,8 +509,8 @@
 			 * @returns {String}
 			 */
 			utf8: function(o, s){
-				s=s.replace(/\r\n/g,"\n");
-				var r='';
+				s = s.replace(/\r\n/g,"\n");
+				var r = '';
 				for (var n=0; n<s.length; n++){
 					var c=s.charCodeAt(n);
 					if (c<128){
@@ -531,7 +541,7 @@
 				var k = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 				var c1, c2, c3, e1, e2, e3, e4;
 				var i = 0; var r = '';
-				v = _libs.utf8(o, s);
+				var v = _libs.utf8(o, s);
 				while (i<v.length){
 					c1 = v.charCodeAt(i++);
 					c2 = v.charCodeAt(i++);
@@ -561,6 +571,7 @@
 			 * @returns {String}
 			 */
 			md5: function(o, s){
+				var string;
 
 				/* Shift bits to left */
 				function RotateLeft(lValue, iShiftBits){
@@ -661,6 +672,7 @@
 				var S31=4, S32=11, S33=16, S34=23;
 				var S41=6, S42=10, S43=15, S44=21;
 				string = _libs.utf8(o, s);
+
 				x = ConvertToWordArray(string);
 				a = 0x67452301; b = 0xEFCDAB89; c = 0x98BADCFE; d = 0x10325476;
 				for (k=0;k<x.length;k+=16){
@@ -734,7 +746,9 @@
 					c=AddUnsigned(c,CC);
 					d=AddUnsigned(d,DD);
 				}
+
 				var temp = WordToHex(a)+WordToHex(b)+WordToHex(c)+WordToHex(d);
+
 				return temp.toLowerCase();
 			}
 		};
@@ -857,6 +871,7 @@
 			if (!_setup.init(opts)) {
 				return false;
 			}
+
 			return true;
 		}();
 

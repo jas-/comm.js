@@ -5,11 +5,17 @@
     <title>comm.js tests</title>
 		<script src="../comm.js"></script>
 		<script>
-		  new comm({
+		  comm({
+				bind: 'default',
 				debug: true
 		  });
 	</script>
 	</head>
 	<body>
+		<div>
+			<form id="default" method="post">
+				<input type="text" id="one">
+			</form>
+		</div>
 	</body>
 </html>
