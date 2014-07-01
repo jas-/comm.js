@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>comm.js tests</title>
+		<script src="../comm.js"></script>
+		<script>
+		  comm({
+				method: 'post',
+				data: {key: 'value'},
+				debug: true
+		  });
+	</script>
+	</head>
+	<body>
+		<div>
+			<form id="default" method="post">
+				<input type="text" id="one">
+			</form>
+		</div>
+	</body>
+</html>

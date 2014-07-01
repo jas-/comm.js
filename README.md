@@ -1,43 +1,52 @@
 # comm.js #
 
-A jQuery plug-in to handle AJAX, XDR, WS & WSS protocols
+Handles XHR, XDR, WS & WSS protocols
 
 Fork me @ https://www.github.com/jas-/comm.js
 
 ## Important ##
-This plug-in is still in alpha phases of development. Currently only supports (without bugs) AJAX requests. The XDR (for clients using MSIE) & WS/WSS protocols have not been thoughly tested.
+Supports XMLHttpRequests, XDR (for clients using MSIE & when using CORS) as well as WS/WSS protocols.
 
 ## Options ##
-This plug-in also has several configurable options available for implementation:
-* _appID_ - The option allows for dual functionality of CSRF support as well as an index to access locally saved keyring data
-* _url_ - The URL param can be used as a substitute for the default binding to a form
+* _url_ - If not specified the current page location is used
+* _method_ - The method to use (post, put, delete etc)
+* _data_ - The data to be processed
 * _callback_ - If you wish to perform additional operations with returned data
 * _precallback_ - Here you can perform some pre-processing if need be
 * _errcallback_ - Handle errors with this callback
 
-## Example usage ##
-Usage is easy. Please see these examples:
+## Examples ##
+Here are a couple of examples
 
-### Default ###
-This example assumes `#form-id` as a valid DOM element.
+### Default use ###
+The default use case
 
 ```javascript
-$('#form-id').comm();
+comm();
 ```
 
-### Custom data object ###
-This example can be used as an event driven interface for custom objects.
+### Debugging support ###
+To enable debugging output
 
 ```javascript
-$(window).comm({
-	url: 'https://webserver.com',
-  data: {key: 'value'}
+comm({
+  debug: true
 });
 ```
 
-## A note on ws/wss and/or xdr protocols ##
-XMLHttpRequests is the default method of communication unless the clients
-browser is Internet explorer or the `url` property is prefixed with `ws` or `wss`.
+### Force ws/wss communications ###
+Here is how you can use the websocket or secure web socket protocls
+
+```javascript
+comm({
+	url: 'ws://echo.websocket.org'
+});
+```
+
+## A note on XDR ##
+This is the least tested protocol this library supports. It will only be used
+when the clients browser is internet explorer has access to the `window.XDomainRequest`
+object and if the URL specified does not match the current window.
 
 ## A note on CORS ##
 If you wish to use this for CORS requests which it does support you must configure your web server to allow the following header params.
