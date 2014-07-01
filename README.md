@@ -4,9 +4,6 @@ Handles XHR, XDR, WS & WSS protocols
 
 Fork me @ https://www.github.com/jas-/comm.js
 
-## Important ##
-Supports XMLHttpRequests, XDR (for clients using MSIE & when using CORS) as well as WS/WSS protocols.
-
 ## Options ##
 * _url_ - If not specified the current page location is used
 * _method_ - The method to use (post, put, delete etc)
