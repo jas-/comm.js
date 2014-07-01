@@ -5,12 +5,12 @@ Handles XHR, XDR, WS & WSS protocols
 Fork me @ https://www.github.com/jas-/comm.js
 
 ## Options ##
-* _url_ - If not specified the current page location is used
-* _method_ - The method to use (post, put, delete etc)
-* _data_ - The data to be processed
-* _callback_ - If you wish to perform additional operations with returned data
-* _precallback_ - Here you can perform some pre-processing if need be
-* _errcallback_ - Handle errors with this callback
+`url`: If not specified the current page location is used
+`method`: The method to use (post, put, delete etc)
+`data`: The data to be processed
+`callback`: If you wish to perform additional operations with returned data
+`precallback`: Here you can perform some pre-processing if need be
+`errcallback`: Handle errors with this callback
 
 ## Examples ##
 Here are a couple of examples
