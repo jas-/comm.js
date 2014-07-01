@@ -46,8 +46,9 @@ when the clients browser is internet explorer has access to the `window.XDomainR
 object and if the URL specified does not match the current window.
 
 ## A note on CORS ##
-If you wish to use this for CORS requests which it does support you must configure your web server to allow the following header params.
+If you wish to use this for CORS requests which it does support you must configure your web server to allow the following header params (this example is tuned to support authentication credentials while limiting access vs. using a wildcard origin such as *)
 ```
+Access-Control-Allow-Origin: https://example.com
 Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
 Access-Control-Allow-Headers: Cache-Control, Content-MD5, Content-Type, X-Alt-Referer, X-Requested-With
 Access-Control-Allow-Credentials: true
