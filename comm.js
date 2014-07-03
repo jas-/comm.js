@@ -80,13 +80,13 @@
        * @param {Function} cb Callback function
        */
       handle: function (obj, cb) {
-				if (!this.online()) {
-	        var id = setInterval(function (obj, cb) {
-						this.mode(obj, cb);
-	        }, obj.interval);
-				}
+        if (!this.online()) {
+          var id = setInterval(function (obj, cb) {
+            this.mode(obj, cb);
+          }, obj.interval);
+        }
 
-				this.mode(obj, cb);
+        this.mode(obj, cb);
 
         clearInterval(id);
       },
@@ -107,15 +107,15 @@
         if ((/msie/i.test(navigator.userAgent)) &&
           (/^(http|https):\/\//i.test(obj.url)) &&
           (!regex.test(obj.url))) {
-          cb(this.xdr(obj));
+          this.xdr(obj, cb);
         }
 
         if (/^(ws|wss):\/\//i.test(obj.url)) {
-          cb(this.websocket(obj));
+          this.websocket(obj, cb);
         }
 
-        cb(this.ajax(obj));
-			},
+        this.ajax(obj, cb);
+      },
 
 
       /**
@@ -127,29 +127,24 @@
        *
        * @returns {String|Object}
        */
-      websocket: function (obj) {
-        var _r = false,
+      websocket: function (obj, cb) {
+        var ret = false,
           socket = new WebSocket(obj.url);
 
         socket.onopen = function () {
           try {
             socket.send(obj.data);
           } catch (exception) {
-		        if ((obj.errcallback) && (/function/.test(typeof (obj.errcallback)))) {
-		          obj.errcallback(exception);
-		        } else {
-	            throw exception;
-						}
+            cb(exception);
           }
         };
 
         socket.onmessage = function (msg) {
-          _r = msg.data;
-
+          ret = msg.data;
           socket.close();
         };
 
-        return _r;
+        cb(null, ret);
       },
 
       /**
@@ -161,36 +156,27 @@
        *
        * @returns {String|Object}
        */
-      xdr: function (obj) {
+      xdr: function (obj, cb) {
         var ret = false;
 
-        if (!window.XDomainRequest) {
-	        if ((obj.errcallback) && (/function/.test(typeof (obj.errcallback)))) {
-	          obj.errcallback('XDomainRequest object not found');
-	        } else {
-	          throw 'XDomainRequest object not found';
-					}
-				}
+        if (!window.XDomainRequest)
+          cb('XDomainRequest object not found');
 
         var xdr = new XDomainRequest();
         xdr.timeout = obj.timeout;
         xdr.open(obj.method, obj.url);
 
         xdr.onsuccess = function (response) {
-          ret = xdr.responseText;
+          ret = response;
         };
 
         xdr.onerror = function (exception) {
-	        if ((obj.errcallback) && (/function/.test(typeof (obj.errcallback)))) {
-	          obj.errcallback('XDomainRequest object not found');
-	        } else {
-	          throw exception;
-					}
+          cb(exception);
         };
 
         xdr.send(obj.data);
 
-        cb(ret);
+        cb(null, ret);
       },
 
       /**
@@ -202,26 +188,18 @@
        *
        * @returns {String|Object}
        */
-      ajax: function (obj) {
+      ajax: function (obj, cb) {
         var ret = false,
           xhr = new XMLHttpRequest(),
           reg = new RegExp(document.location.href);
 
-        function response(data) {
-          return data.responseText;
-        }
-
         function error(err) {
-	        if ((obj.errcallback) && (/function/.test(typeof (obj.errcallback)))) {
-	          obj.errcallback(err.status);
-	        } else {
-	          throw err.status;
-					}
+          cb(obj.errcallback(err.status));
         }
 
         function handler() {
-          if (this.readyState == this.DONE && this.status == 200) {
-            ret = response(this.responseText);
+          if (this.readyState == 4 && this.status == 200) {
+            cb(null, this.responseText);
           }
         }
 
@@ -234,8 +212,6 @@
         xhr.open(obj.method, obj.url, obj.async);
         headers();
         xhr.send(/post|put/i.test(obj.method) ? obj.data : null);
-
-        return ret;
       }
     };
 
@@ -276,10 +252,13 @@
     /**
      * @function init
      * @scope public
-     * @abstract
+     * @abstract Handles options and begins communications
      */
     var init = function () {
+      cb = cb || obj;
+
       var opts = libs.merge(obj, defaults);
+
       setup.init(opts, cb);
     }();
 

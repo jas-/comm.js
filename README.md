@@ -10,9 +10,6 @@ Fork me @ https://www.github.com/jas-/comm.js
 * `data`: The data to be processed
 * `timeout`: Timeout value for retries
 * `interval`: Interval to use for retrying send upon connection termination
-* `callback`: If you wish to perform additional operations with returned data
-* `precallback`: Here you can perform some pre-processing if need be
-* `errcallback`: Handle errors with this callback
 
 ## Examples ##
 Here are a couple of examples
@@ -21,7 +18,10 @@ Here are a couple of examples
 The default use case
 
 ```javascript
-comm();
+comm(function(err, response){
+  if (err) throw err;
+	console.log(response);
+});
 ```
 
 ### Force ws/wss communications ###
@@ -30,6 +30,9 @@ Here is how you can use the websocket or secure web socket protocls
 ```javascript
 comm({
 	url: 'ws://echo.websocket.org'
+}, function(err, response){
+  if (err) throw err;
+	console.log(response);
 });
 ```
 
