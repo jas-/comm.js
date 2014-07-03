@@ -8,6 +8,8 @@ Fork me @ https://www.github.com/jas-/comm.js
 * `url`: If not specified the current page location is used
 * `method`: The method to use (post, put, delete etc)
 * `data`: The data to be processed
+* `timeout`: Timeout value for retries
+* `interval`: Interval to use for retrying send upon connection termination
 * `callback`: If you wish to perform additional operations with returned data
 * `precallback`: Here you can perform some pre-processing if need be
 * `errcallback`: Handle errors with this callback
@@ -20,15 +22,6 @@ The default use case
 
 ```javascript
 comm();
-```
-
-### Debugging support ###
-To enable debugging output
-
-```javascript
-comm({
-  debug: true
-});
 ```
 
 ### Force ws/wss communications ###
