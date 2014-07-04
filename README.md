@@ -19,9 +19,22 @@ The default use case
 
 ```javascript
 comm(function(err, response){
-  if (err) throw err;
+	if (err) throw err;
 	console.log(response);
 });
+```
+
+### A post example ###
+An example sending a post request with a JSON object
+
+```javascript
+  comm({
+    method: 'post',
+    data: {abc: '123', xyz: 345}
+  }, function(err, res){
+    if (err) throw err;
+    console.log(res);
+  });
 ```
 
 ### Force ws/wss communications ###
@@ -31,7 +44,7 @@ Here is how you can use the websocket or secure web socket protocls
 comm({
 	url: 'ws://echo.websocket.org'
 }, function(err, response){
-  if (err) throw err;
+	if (err) throw err;
 	console.log(response);
 });
 ```
