@@ -204,16 +204,16 @@
         }
 
         function headers() {
-					if (/put|post/.test(obj.method))
-						xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+          if (/put|post/.test(obj.method))
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
           if (!reg.test(obj.url))
             xhr.withCredentials = true;
 
-					if (libs.parse(obj.data)) {
-						xhr.setRequestHeader('Content-Type', 'application/json');
-						obj.data = JSON.stringify(obj.data);
-					}
+          if (libs.parse(obj.data)) {
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            obj.data = JSON.stringify(obj.data);
+          }
         }
 
         xhr.onreadystatechange = handler;
@@ -240,7 +240,7 @@
        *
        * @returns {Object}
        */
-      merge: function(defaults, obj) {
+      merge: function (defaults, obj) {
         defaults = defaults || {};
 
         for (var item in defaults) {
@@ -264,16 +264,16 @@
        *
        * @returns {Boolean}
        */
-			parse: function(str) {
-				var ret = false;
-				try {
-					(/object/.test(str)) ? JSON.parse(str) : JSON.stringify(str);
-				} catch (e) {
-					ret = true;
-				}
-				return ret;
-			}
-		};
+      parse: function (str) {
+        var ret = false;
+        try {
+          (/object/.test(str)) ? JSON.parse(str): JSON.stringify(str);
+        } catch (e) {
+          ret = true;
+        }
+        return ret;
+      }
+    };
 
     /**
      * @function init
