@@ -84,11 +84,10 @@
           var id = setInterval(function (obj, cb) {
             this.mode(obj, cb);
           }, obj.interval);
-        }
-
-        this.mode(obj, cb);
-
-        clearInterval(id);
+	        clearInterval(id);
+        } else {
+	        this.mode(obj, cb);
+				}
       },
 
       /**
@@ -105,8 +104,8 @@
         var regex = new RegExp(document.location.href);
 
         if ((/msie/i.test(navigator.userAgent)) &&
-          (/^(http|https):\/\//i.test(obj.url)) &&
-          (!regex.test(obj.url))) {
+						(/^(http|https):\/\//i.test(obj.url)) &&
+						(!regex.test(obj.url))) {
           this.xdr(obj, cb);
         }
 
