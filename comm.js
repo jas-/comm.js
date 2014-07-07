@@ -106,14 +106,14 @@
         if ((/msie/i.test(navigator.userAgent)) &&
 						(/^(http|https):\/\//i.test(obj.url)) &&
 						(!regex.test(obj.url))) {
-          this.xdr(obj, cb);
+          return this.xdr(obj, cb);
         }
 
         if (/^(ws|wss):\/\//i.test(obj.url)) {
-          this.websocket(obj, cb);
+          return this.websocket(obj, cb);
         }
 
-        this.ajax(obj, cb);
+        return this.ajax(obj, cb);
       },
 
 
@@ -127,8 +127,7 @@
        * @returns {String|Object}
        */
       websocket: function (obj, cb) {
-        var ret = false,
-          socket = new WebSocket(obj.url);
+        var socket = new WebSocket(obj.url);
 
         socket.onopen = function () {
           try {
@@ -139,11 +138,9 @@
         };
 
         socket.onmessage = function (msg) {
-          ret = msg.data;
           socket.close();
+					cb(null, msg.data);
         };
-
-        cb(null, ret);
       },
 
       /**
