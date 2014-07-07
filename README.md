@@ -42,6 +42,7 @@ Here is how you can use the websocket or secure web socket protocls
 
 ```javascript
 comm({
+	data: 'ping test',
 	url: 'ws://echo.websocket.org'
 }, function(err, response){
 	if (err) throw err;
