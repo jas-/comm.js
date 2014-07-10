@@ -17,15 +17,17 @@
      * @abstract Default set of options for plug-in
      *
      * @param {Boolean} async Default to async communication
-     * @param {Mixed} data String/Boolean/Object
+     * @param {Mixed} data Serialized key/values or JSON object
+     * @param {Object} headers An key/value object of headers (rfc4229)
      * @param {Integer} interval Seconds before connection retry
-     * @param {String} method Method of communication (GET, PUT, POST, DELETE)
+     * @param {String} method Method of communication (rfc2616)
      * @param {Integer} timeout Timeout in miliseconds
      * @param {String} url Specified URL param
      */
     var defaults = {
       async: true,
       data: false,
+      headers: {},
       interval: 3600,
       method: 'get',
       timeout: 10,
@@ -84,10 +86,10 @@
           var id = setInterval(function (obj, cb) {
             this.mode(obj, cb);
           }, obj.interval);
-	        clearInterval(id);
+          clearInterval(id);
         } else {
-	        this.mode(obj, cb);
-				}
+          this.mode(obj, cb);
+        }
       },
 
       /**
@@ -104,8 +106,9 @@
         var regex = new RegExp(document.location.href);
 
         if ((/msie/i.test(navigator.userAgent)) &&
-						(/^(http|https):\/\//i.test(obj.url)) &&
-						(!regex.test(obj.url))) {
+          (/^(http|https):\/\//i.test(obj.url)) &&
+          (!regex.test(obj.url)) &&
+          (/msie (\d+)/i.exec(navigator.userAgent)[1] > 10)) {
           return this.xdr(obj, cb);
         }
 
@@ -139,7 +142,7 @@
 
         socket.onmessage = function (msg) {
           socket.close();
-					cb(null, msg.data);
+          cb(null, msg.data);
         };
       },
 
@@ -185,8 +188,7 @@
        * @returns {String|Object}
        */
       ajax: function (obj, cb) {
-        var ret = false,
-          xhr = new XMLHttpRequest(),
+        var xhr = new XMLHttpRequest(),
           reg = new RegExp(document.location.href);
 
         function error(err) {
@@ -194,27 +196,30 @@
         }
 
         function handler() {
-          if (this.readyState == 4 && this.status == 200) {
-            cb(null, this.responseText);
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            cb(null, xhr.responseText);
           }
         }
 
-        function headers() {
-          if (/put|post/.test(obj.method))
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-          if (!reg.test(obj.url))
-            xhr.withCredentials = true;
-
+        function headers(obj) {
           if (libs.parse(obj.data)) {
             xhr.setRequestHeader('Content-Type', 'application/json');
             obj.data = JSON.stringify(obj.data);
           }
+
+          if (Object.keys(obj).length > 0) {
+            for (var h in obj.headers) {
+              xhr.setRequestHeader(h, obj.headers[h]);
+            }
+          }
+
+          if (!reg.test(obj.url))
+            xhr.withCredentials = true;
         }
 
         xhr.onreadystatechange = handler;
         xhr.open(obj.method, obj.url, obj.async);
-        headers();
+        headers(obj);
         xhr.send(obj.data);
       }
     };
