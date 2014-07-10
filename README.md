@@ -5,6 +5,8 @@ Handles XHR, XDR, WS & WSS protocols
 Fork me @ https://www.github.com/jas-/comm.js
 
 ## Options ##
+* `async`: Force async opterational mode
+* `binary`: Force binary mode sends
 * `url`: If not specified the current page location is used
 * `headers`: A key/value object of headers to apply
 * `method`: The method to use (post, put, delete etc)

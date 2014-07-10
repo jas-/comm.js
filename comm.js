@@ -17,6 +17,7 @@
      * @abstract Default set of options for plug-in
      *
      * @param {Boolean} async Default to async communication
+     * @param {Boolean} binary Use binary mode
      * @param {Mixed} data Serialized key/values or JSON object
      * @param {Object} headers An key/value object of headers (rfc4229)
      * @param {Integer} interval Seconds before connection retry
@@ -26,6 +27,7 @@
      */
     var defaults = {
       async: true,
+			binary: false,
       data: false,
       headers: {},
       interval: 3600,
@@ -220,7 +222,12 @@
         xhr.onreadystatechange = handler;
         xhr.open(obj.method, obj.url, obj.async);
         headers(obj);
-        xhr.send(obj.data);
+
+				if (obj.binary) {
+					xhr.sendAsBinary(obj.data);
+				} else {
+	        xhr.send(obj.data);
+				}
       }
     };
 
