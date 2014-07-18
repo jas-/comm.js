@@ -199,7 +199,7 @@
 
         function handler() {
           var status = xhr.status;
-          if (xhr.readyState == 4 && (status >= 200 && status <= 299 || status === 304) {
+          if (xhr.readyState == 4 && (status >= 200 && status <= 299 || status === 304)) {
             cb(null, xhr.responseText);
           }
         }
