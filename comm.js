@@ -198,7 +198,8 @@
         }
 
         function handler() {
-          if (xhr.readyState == 4 && xhr.status == 200) {
+          var status = xhr.status;
+          if (xhr.readyState == 4 && (status >= 200 && status <= 299 || status === 304)) {
             cb(null, xhr.responseText);
           }
         }
