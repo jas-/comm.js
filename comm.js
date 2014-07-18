@@ -27,7 +27,7 @@
      */
     var defaults = {
       async: true,
-			binary: false,
+      binary: false,
       data: false,
       headers: {},
       interval: 3600,
@@ -224,11 +224,11 @@
         xhr.open(obj.method, obj.url, obj.async);
         headers(obj);
 
-				if (obj.binary) {
-					xhr.sendAsBinary(obj.data);
-				} else {
-	        xhr.send(obj.data);
-				}
+        if (obj.binary) {
+          xhr.sendAsBinary(obj.data);
+        } else {
+          xhr.send(obj.data);
+        }
       }
     };
 
