@@ -41,7 +41,7 @@ An example sending a post request with a JSON object
 ```
 
 ### Force ws/wss communications ###
-Here is how you can use the websocket or secure web socket protocls
+Here is how you can use the websocket or secure web socket protocols
 
 ```javascript
 comm({
@@ -62,6 +62,20 @@ comm({
 	headers: {
 		Content-Type: 'text/plain'
 	}
+}, function(err, response){
+	if (err) throw err;
+	console.log(response);
+});
+```
+
+## A note form submissions ##
+To attach a form object as the payload the simpliest method would be
+the following example.
+
+```javascript
+var formData = new FormData(document.getElementById('form-id'));
+comm({
+	data: formData
 }, function(err, response){
 	if (err) throw err;
 	console.log(response);
