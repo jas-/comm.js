@@ -1,18 +1,19 @@
 {
   "name": "comm.js",
   "main": "comm.min.js",
-  "version": "0.1.2",
+  "version": "0.1.1",
   "homepage": "https://github.com/jas-/comm.js",
   "authors": [
     "jas- <jason.gerfen@gmail.com>"
   ],
-  "description": "Support XHR, XDR, WS & WSS communication protocols in browsers",
+  "description": "Handles XHR, XDR, WS & WSS browser communication protocols",
   "keywords": [
-    "XMLHttpRequests",
-    "XDomainRequests",
-    "WebSockets",
+    "XMLHttpRequest",
+    "XDomainRequest",
+    "WebSocket",
     "WebSocketSecure",
-    "AJAX"
+    "AJAX",
+    "communications"
   ],
   "license": "GPLv3",
   "ignore": [
@@ -21,5 +22,5 @@
     "bower_components",
     "test",
     "tests"
-  ],
+  ]
 }
