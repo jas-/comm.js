@@ -263,7 +263,6 @@
         return obj;
       },
 
-
       /**
        * @function parse
        * @scope private

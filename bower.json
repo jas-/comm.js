@@ -13,6 +13,9 @@
     "WebSocket",
     "WebSocketSecure",
     "AJAX",
+    "XHR",
+    "XDR",
+    "WS",
     "communications"
   ],
   "license": "GPLv3",
