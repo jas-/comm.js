@@ -292,7 +292,10 @@
       cb = cb || obj;
 
       var opts = libs.merge(obj, defaults);
-
+      if (opts.cache) {
+        // Added cache busting to the url using current timestamp
+        opts.url = opts.url + ((/\?/).test(opts.url) ? "&" : "?") + new Date().getTime();
+      }
       setup.init(opts, cb);
     }();
 
